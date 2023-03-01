@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const { body } = require("express-validator/check");
+const { body } = require("express-validator");
 
-const { getPosts, createPost } = require("../controllers/feed");
+const { getPosts, createPost, getPost } = require("../controllers/feed");
 
 router.get("/posts", getPosts);
 
@@ -13,5 +13,7 @@ router.post(
   ],
   createPost
 );
+
+router.get("/post/:postId", getPost);
 
 module.exports = router;
