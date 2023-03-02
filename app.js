@@ -1,12 +1,14 @@
 const express = require("express");
 require("dotenv").config();
 const bodyParser = require("body-parser");
-const feedRoutes = require("./routes/feed");
 const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
-const app = express();
 
+const feedRoutes = require("./routes/feed");
+const authRoutes = require("./routes/auth");
+
+const app = express();
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -42,12 +44,14 @@ app.use((req, res, next) => {
   next();
 });
 app.use("/feed", feedRoutes);
+app.use("/auth", authRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).json({ message: message });
+  const data = error.data;
+  res.status(status).json({ message: message, data });
 });
 
 mongoose
