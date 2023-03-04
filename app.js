@@ -59,7 +59,12 @@ mongoose
     `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.wh0bd8s.mongodb.net/blog?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(8080);
+    const server = app.listen(8080);
+    const io = require("./socket").init(server);
+    io.on("connection", (socket) => {
+      console.log("client connected");
+    });
+
     console.log("db connection successful");
   })
   .catch((err) => {
