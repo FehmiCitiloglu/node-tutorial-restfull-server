@@ -43,8 +43,6 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
-app.use("/feed", feedRoutes);
-app.use("/auth", authRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -59,12 +57,7 @@ mongoose
     `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.wh0bd8s.mongodb.net/blog?retryWrites=true&w=majority`
   )
   .then(() => {
-    const server = app.listen(8080);
-    const io = require("./socket").init(server);
-    io.on("connection", (socket) => {
-      console.log("client connected");
-    });
-
+    app.listen(8080);
     console.log("db connection successful");
   })
   .catch((err) => {
