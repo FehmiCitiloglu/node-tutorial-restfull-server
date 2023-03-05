@@ -4,9 +4,14 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
 const multer = require("multer");
+const { graphqlHTTP } = require("express-graphql");
+const { hello } = require("./graphql/resolvers");
 
-const feedRoutes = require("./routes/feed");
-const authRoutes = require("./routes/auth");
+const graphqlSchema = require("./graphql/schema");
+const graphqlResolver = require("./graphql/resolvers");
+
+// const feedRoutes = require("./routes/feed");
+// const authRoutes = require("./routes/auth");
 
 const app = express();
 const fileStorage = multer.diskStorage({
@@ -41,8 +46,29 @@ app.use((req, res, next) => {
     "OPTIONS, GET, POST, PUT, PATCH, DELETE"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
   next();
 });
+
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+    graphiql: true,
+    formatError(err) {
+      if (!err.originalError) {
+        return err;
+      }
+      const { data } = err.originalError;
+      const message = err.message || "An error occurred.";
+      const code = err.originalError.code || 500;
+      return { message, status: code, data: data };
+    },
+  })
+);
 
 app.use((error, req, res, next) => {
   console.log(error);
