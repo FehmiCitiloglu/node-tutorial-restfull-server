@@ -3,7 +3,6 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const path = require("path");
-const fs = require("fs");
 const multer = require("multer");
 const { graphqlHTTP } = require("express-graphql");
 const { hello } = require("./graphql/resolvers");
@@ -11,6 +10,7 @@ const { hello } = require("./graphql/resolvers");
 const graphqlSchema = require("./graphql/schema");
 const graphqlResolver = require("./graphql/resolvers");
 const auth = require("./middleware/is-auth");
+const { clearImage } = require("./util/file");
 
 // const feedRoutes = require("./routes/feed");
 // const authRoutes = require("./routes/auth");
@@ -109,8 +109,3 @@ mongoose
     console.log("db connection failed");
     console.log(err);
   });
-
-const clearImage = (filePath) => {
-  filePath = path.join(__dirname, "..", filePath);
-  fs.unlink(filePath, (err) => console.log(err));
-};
